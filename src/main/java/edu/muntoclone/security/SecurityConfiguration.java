@@ -63,6 +63,7 @@ public class SecurityConfiguration {
                 .antMatchers("/swagger-resources/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
+                .formLogin().disable()
                 .build();
     }
 
