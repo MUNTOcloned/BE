@@ -24,8 +24,8 @@ logging:
 cloud:
   aws:
     credentials:
-      access-key: AKIADADADADA2WDTJOVFZBADADADZWJWNH
-      secret-key: kxbS4eBQG0ADADADAD+W01Gq//ADADADCWZ00SyLJfJZvvJ4oWanW/
+      access-key: AKIA2WDTJOVDDADADADFZBZWJWNH
+      secret-key: kxbSAZADSADS4eBQG0+W0DADA1Gq//CWZ00SyLJfJZvvJ4oWanW/
     stack:
       auto: false
     region:

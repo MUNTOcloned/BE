@@ -35,4 +35,14 @@ public class SocialService {
         final Social social = socialRegisterRequest.toEntity(owner, category, imageUrl);
         socialRepository.save(social);
     }
+
+    @Transactional
+    public void deleteById(Long id) {
+        socialRepository.deleteById(id);
+    }
+
+    public Social findById(Long id) {
+        return socialRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Social does not exist."));
+    }
 }
