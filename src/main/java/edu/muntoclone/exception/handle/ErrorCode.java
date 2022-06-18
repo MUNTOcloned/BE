@@ -9,6 +9,7 @@ public enum ErrorCode {
     MISSING_REQUEST_BODY(400, "C002", "missing request body"),
     INTERNAL_SERVER_ERROR(500, "C003", "internal server error"),
 
+    MEDIA_TYPE_NOT_SUPPORTED(400, "C004", "media type not supported"),
 
     // Authentication
     DUPLICATE_USERNAME(400, "A001", "the email already exists."),

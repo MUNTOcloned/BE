@@ -3,6 +3,7 @@ package edu.muntoclone.entity;
 import edu.muntoclone.type.MeetingType;
 import edu.muntoclone.type.RecruitmentType;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -54,4 +55,26 @@ public class Social {
 
     private String question;
 
+    @Builder
+    public Social(Member owner, Category category, String title,
+                  String content, String imageUrl, LocalDate startDate,
+                  LocalTime startTime, MeetingType meetingType, RecruitmentType recruitmentType,
+                  String address, Integer limitHeadcount, Integer entryFee,
+                  String entryFeeInfo, String question
+    ) {
+        this.owner = owner;
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.meetingType = meetingType;
+        this.recruitmentType = recruitmentType;
+        this.address = address;
+        this.limitHeadcount = limitHeadcount;
+        this.entryFee = entryFee;
+        this.entryFeeInfo = entryFeeInfo;
+        this.question = question;
+    }
 }

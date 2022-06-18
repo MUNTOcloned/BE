@@ -1,5 +1,6 @@
 package edu.muntoclone.security;
 
+import edu.muntoclone.jwt.JwtCheckFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -19,6 +21,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfiguration {
+
+
+    private final PrincipalService principalService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -49,7 +54,11 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        final JwtCheckFilter jwtCheckFilter =
+                new JwtCheckFilter(authentication -> authentication, principalService);
+
         return http
+                .addFilterAt(jwtCheckFilter, BasicAuthenticationFilter.class)
                 .csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

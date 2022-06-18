@@ -6,7 +6,6 @@ import edu.muntoclone.entity.Member;
 import edu.muntoclone.jwt.JwtToken;
 import edu.muntoclone.jwt.JwtUtils;
 import edu.muntoclone.service.MemberService;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -34,7 +33,6 @@ public class AuthenticationApiController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "회원가입 API", description = "ContentType: multipart/form-data")
     public void signup(MemberSignupRequest memberSignupRequest) {
         memberService.confirmMemberEmailDuplicate(memberSignupRequest.getEmail());
         memberService.signup(
@@ -44,7 +42,6 @@ public class AuthenticationApiController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "로그인 API")
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JwtToken login(
             @RequestBody MemberLoginRequest memberLoginRequest, HttpServletResponse response) {

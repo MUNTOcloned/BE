@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -65,6 +66,16 @@ public class GlobalExceptionHandler {
         log.error("handleMethodArgumentNotValidException", e);
         String path = request.getRequestURI();
         return ErrorResponse.of(path, ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResponse handleHttpMediaTypeNotSupportedException(
+            HttpMediaTypeNotSupportedException e, HttpServletRequest request) {
+
+        log.error("handleHttpMediaTypeNotSupportedException", e);
+        String path = request.getRequestURI();
+        return ErrorResponse.of(path, ErrorCode.MEDIA_TYPE_NOT_SUPPORTED);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
