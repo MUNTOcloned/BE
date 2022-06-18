@@ -1,6 +1,8 @@
 package edu.muntoclone.controller;
 
 import edu.muntoclone.dto.SocialRegisterRequest;
+import edu.muntoclone.entity.Member;
+import edu.muntoclone.entity.Social;
 import edu.muntoclone.security.PrincipalDetails;
 import edu.muntoclone.service.SocialService;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +34,14 @@ public class SocialApiController {
     }
 
     @DeleteMapping("/socials/{id}")
-    public void deleteSocial(@PathVariable Long id) {
-        // TODO document why this method is empty
+    public void deleteSocial(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        final Long socialOwnerId = socialService.findById(id).getOwner().getId();
+        final Long loginMemberId = principalDetails.getMember().getId();
+
+        if (socialOwnerId.equals(loginMemberId))
+            throw new IllegalArgumentException("You are not the owner of social.");
+
+        socialService.deleteById(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
