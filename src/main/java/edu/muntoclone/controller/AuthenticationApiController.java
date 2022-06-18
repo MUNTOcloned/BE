@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class AuthenticationController {
+public class AuthenticationApiController {
 
     private final MemberService memberService;
     private final BCryptPasswordEncoder passwordEncoder;
