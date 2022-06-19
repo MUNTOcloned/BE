@@ -1,6 +1,7 @@
 package edu.muntoclone.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,11 @@ public class Participation {
     @JoinColumn(name = "SOCIAL_ID")
     private Social social;
 
+    @Builder
+    public Participation(String answer, Integer approvedStatus, Member member, Social social) {
+        this.answer = answer;
+        this.approvedStatus = approvedStatus;
+        this.member = member;
+        this.social = social;
+    }
 }
