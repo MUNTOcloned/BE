@@ -11,6 +11,7 @@ import edu.muntoclone.security.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,13 +25,13 @@ public class SocialService {
 
     @Transactional
     public void registerSocial(SocialRegisterRequest socialRegisterRequest,
-            PrincipalDetails principalDetails) {
+                               PrincipalDetails principalDetails) {
 
         final Member owner = principalDetails.getMember();
         final Category category = categoryService.findById(socialRegisterRequest.getCategoryId());
-        final String imageUrl = awsS3BucketService.uploadFile(
-                socialRegisterRequest.getImageFile(), AwsS3FileUploadType.SOCIAL
-        );
+        final MultipartFile imageFile = socialRegisterRequest.getImageFile();
+        final String imageUrl = imageFile.isEmpty() ?
+                null : awsS3BucketService.uploadFile(imageFile, AwsS3FileUploadType.SOCIAL);
 
         final Social social = socialRegisterRequest.toEntity(owner, category, imageUrl);
         socialRepository.save(social);

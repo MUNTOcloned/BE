@@ -6,12 +6,14 @@ import edu.muntoclone.entity.Member;
 import edu.muntoclone.exception.DuplicateUsernameException;
 import edu.muntoclone.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -22,9 +24,10 @@ public class MemberService {
 
     @Transactional
     public void signup(Member member, MultipartFile profileImageFile) {
-        if (profileImageFile != null) {
+        if (!profileImageFile.isEmpty()) {
             final String profileImageUrl = awsS3BucketService.uploadFile(
-                    profileImageFile, AwsS3FileUploadType.PROFILE);
+                    profileImageFile, AwsS3FileUploadType.PROFILE
+            );
 
             member.setProfileImageUrl(profileImageUrl);
         }
