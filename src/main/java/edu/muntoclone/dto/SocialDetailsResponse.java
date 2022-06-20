@@ -27,11 +27,13 @@ public class SocialDetailsResponse {
     private String entryFeeInfo;
     private Integer socialLikeCount;
 
+    private boolean isParticipate;
+
     @Builder
     public SocialDetailsResponse(Long id, String socialImageUrl, String title, String content,
                                  String meetingType, String recruitmentType, String address,
                                  LocalDate startDate, LocalTime startTime, Integer limitHeadcount,
-                                 Integer entryFee, String entryFeeInfo, Integer socialLikeCount) {
+                                 Integer entryFee, String entryFeeInfo, Integer socialLikeCount, boolean isParticipate) {
 
         this.id = id;
         this.socialImageUrl = socialImageUrl;
@@ -46,9 +48,10 @@ public class SocialDetailsResponse {
         this.entryFee = entryFee;
         this.entryFeeInfo = entryFeeInfo;
         this.socialLikeCount = socialLikeCount;
+        this.isParticipate = isParticipate;
     }
 
-    public static SocialDetailsResponse of(Social social) {
+    public static SocialDetailsResponse of(Social social, boolean isParticipate) {
         return SocialDetailsResponse.builder()
                 .id(social.getId())
                 .socialImageUrl(social.getImageUrl())
@@ -63,6 +66,7 @@ public class SocialDetailsResponse {
                 .entryFee(social.getEntryFee())
                 .entryFeeInfo(social.getEntryFeeInfo())
                 .socialLikeCount(0)
+                .isParticipate(isParticipate)
                 .build();
     }
 }
