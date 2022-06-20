@@ -6,20 +6,26 @@ import edu.muntoclone.dto.SocialRegisterRequest;
 import edu.muntoclone.entity.Member;
 import edu.muntoclone.entity.Participation;
 import edu.muntoclone.entity.Social;
+import edu.muntoclone.exception.SocialHeadcountLimitException;
+import edu.muntoclone.repository.ParticipationRepository;
 import edu.muntoclone.security.PrincipalDetails;
 import edu.muntoclone.service.ParticipationService;
 import edu.muntoclone.service.SocialService;
+import edu.muntoclone.type.RecruitmentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RestController
@@ -29,13 +35,15 @@ public class SocialApiController {
 
     private final SocialService socialService;
     private final ParticipationService participationService;
+    private final ParticipationRepository participationRepository;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/socials", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void registerSocial(SocialRegisterRequest socialRegisterRequest,
-                               @AuthenticationPrincipal PrincipalDetails principalDetails) {
-
-        socialService.registerSocial(socialRegisterRequest, principalDetails);
+    @PostMapping(value = "/categories/{id}/socials", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void registerSocial(
+            @PathVariable Long id,
+            SocialRegisterRequest socialRegisterRequest,
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        socialService.registerSocial(id, socialRegisterRequest, principalDetails);
     }
 
     @PatchMapping(value = "/socials/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -58,20 +66,24 @@ public class SocialApiController {
     public SocialDetailsResponse socialDetail(@PathVariable Long id) {
         final Social social = socialService.findById(id);
         return SocialDetailsResponse.of(social);
+
     }
 
     @GetMapping("/socials/{id}/members")
     public SocialMembersResponse findAllSocialMembers(@PathVariable Long id) {
+        // TODO: 2022-06-19 서비스 로직으로 분리해야 함.
         final Member owner = socialService.findById(id).getOwner();
-        final List<Participation> participationList = participationService.findAllBySocialId(id);
+        final List<Participation> participationList = participationService.findAllBySocialId(id)
+                .stream().filter(p -> p.getApprovedStatus().equals(1))
+                .collect(toList());
         final List<Member> members = participationList.stream()
                 .map(Participation::getMember)
-                .collect(Collectors.toList());
+                .collect(toList());
 
         final List<SocialMembersResponse.SocialMember> socialMemberResponses =
                 members.stream()
-                .map(SocialMembersResponse.SocialMember::of)
-                .collect(Collectors.toList());
+                        .map(SocialMembersResponse.SocialMember::of)
+                        .collect(toList());
 
         return SocialMembersResponse.builder()
                 .owner(SocialMembersResponse.SocialMember.of(owner))
@@ -79,9 +91,42 @@ public class SocialApiController {
                 .build();
     }
 
+    @GetMapping("/categories/{id}/socials")
+    public Page<SocialDetailsResponse> findAllSocials(
+            @PathVariable Long id,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        return socialService.findAllByCategoryId(id, pageable)
+                .map(SocialDetailsResponse::of);
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/socials/{id}/participation")
-    public void participate(@PathVariable Long id) {
-        // TODO document why this method is empty
+    public void participate(@PathVariable Long id,
+                            @RequestBody String answer,
+                            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        final Social social = socialService.findById(id);
+        final Member participationMember = principalDetails.getMember();
+        int approvedStatus = 0;
+
+        // TODO: 2022-06-19 서비스 로직으로 분리해야 함.
+        final int participationHeadcount = participationService.findAllBySocialId(social.getId())
+                .size();
+
+        // 소셜링의 참여 인원이 꽉찼으면 거부
+        if (participationHeadcount >= social.getLimitHeadcount())
+            throw new SocialHeadcountLimitException("The number of people is full.");
+
+        if (social.getRecruitmentType() == RecruitmentType.EARLY_BIRD)
+            approvedStatus = 1;
+
+        final Participation participation = Participation.builder()
+                .member(participationMember)
+                .social(social)
+                .answer(answer)
+                .approvedStatus(approvedStatus)
+                .build();
+
+        participationRepository.save(participation);
     }
 }

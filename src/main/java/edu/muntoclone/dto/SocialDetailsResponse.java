@@ -13,6 +13,7 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SocialDetailsResponse {
 
+    private Long id;
     private String socialImageUrl;
     private String title;
     private String content;
@@ -27,11 +28,12 @@ public class SocialDetailsResponse {
     private Integer socialLikeCount;
 
     @Builder
-    public SocialDetailsResponse(String socialImageUrl, String title, String content,
+    public SocialDetailsResponse(Long id, String socialImageUrl, String title, String content,
                                  String meetingType, String recruitmentType, String address,
                                  LocalDate startDate, LocalTime startTime, Integer limitHeadcount,
                                  Integer entryFee, String entryFeeInfo, Integer socialLikeCount) {
 
+        this.id = id;
         this.socialImageUrl = socialImageUrl;
         this.title = title;
         this.content = content;
@@ -48,6 +50,7 @@ public class SocialDetailsResponse {
 
     public static SocialDetailsResponse of(Social social) {
         return SocialDetailsResponse.builder()
+                .id(social.getId())
                 .socialImageUrl(social.getImageUrl())
                 .title(social.getTitle())
                 .content(social.getContent())
