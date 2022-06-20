@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -21,5 +23,9 @@ public class CategoryService {
     @Transactional
     public void add(Category category) {
         categoryRepository.save(category);
+    }
+
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
     }
 }
