@@ -14,7 +14,7 @@ import java.time.LocalTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Social {
+public class Social extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

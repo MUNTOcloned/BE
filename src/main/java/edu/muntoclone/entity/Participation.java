@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Participation {
+public class Participation extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

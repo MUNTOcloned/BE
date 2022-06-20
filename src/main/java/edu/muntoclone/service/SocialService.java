@@ -9,6 +9,8 @@ import edu.muntoclone.entity.Social;
 import edu.muntoclone.repository.SocialRepository;
 import edu.muntoclone.security.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,11 +26,13 @@ public class SocialService {
     private final AwsS3BucketService awsS3BucketService;
 
     @Transactional
-    public void registerSocial(SocialRegisterRequest socialRegisterRequest,
-                               PrincipalDetails principalDetails) {
+    public void registerSocial(
+            Long categoryId,
+            SocialRegisterRequest socialRegisterRequest,
+            PrincipalDetails principalDetails) {
 
         final Member owner = principalDetails.getMember();
-        final Category category = categoryService.findById(socialRegisterRequest.getCategoryId());
+        final Category category = categoryService.findById(categoryId);
         final MultipartFile imageFile = socialRegisterRequest.getImageFile();
         final String imageUrl = imageFile.isEmpty() ?
                 null : awsS3BucketService.uploadFile(imageFile, AwsS3FileUploadType.SOCIAL);
@@ -45,5 +49,9 @@ public class SocialService {
     public Social findById(Long id) {
         return socialRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Social does not exist."));
+    }
+
+    public Page<Social> findAllByCategoryId(Long id, Pageable pageable) {
+        return socialRepository.findAllByCategoryId(id, pageable);
     }
 }
