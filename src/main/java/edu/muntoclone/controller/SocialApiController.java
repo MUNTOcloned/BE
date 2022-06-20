@@ -24,6 +24,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -63,15 +65,20 @@ public class SocialApiController {
     }
 
     @GetMapping("/socials/{id}")
-    public SocialDetailsResponse socialDetail(@PathVariable Long id) {
-        final Social social = socialService.findById(id);
-        return SocialDetailsResponse.of(social);
+    public SocialDetailsResponse socialDetail(
+            @PathVariable Long id,
+            @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
+        final boolean isParticipate = socialService.isParticipate(id, principalDetails);
+        final Social social = socialService.findById(id);
+        return SocialDetailsResponse.of(social, isParticipate);
     }
 
     @GetMapping("/socials/{id}/members")
-    public SocialMembersResponse findAllSocialMembers(@PathVariable Long id) {
-        return socialService.findMembersBySocialId(id);
+    public SocialMembersResponse findAllSocialMembers(
+            @PathVariable Long id,
+            @RequestBody Integer approvedStatus) {
+        return socialService.findMembersBySocialId(id, approvedStatus);
     }
 
     @GetMapping("/categories/{id}/socials")
@@ -80,7 +87,7 @@ public class SocialApiController {
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         return socialService.findAllByCategoryId(id, pageable)
-                .map(SocialDetailsResponse::of);
+                .map(s -> SocialDetailsResponse.of(s, false));
     }
 
     @ResponseStatus(HttpStatus.CREATED)

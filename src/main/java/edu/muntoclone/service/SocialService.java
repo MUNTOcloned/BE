@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -93,11 +94,11 @@ public class SocialService {
         participationRepository.save(participation);
     }
 
-    public SocialMembersResponse findMembersBySocialId(Long socialId) {
+    public SocialMembersResponse findMembersBySocialId(Long socialId, Integer approvedStatus) {
         final Member owner = this.findById(socialId).getOwner();
         final List<Participation> participationList = participationService
                 .findAllBySocialId(socialId)
-                .stream().filter(p -> p.getApprovedStatus().equals(1))
+                .stream().filter(p -> p.getApprovedStatus().equals(approvedStatus))
                 .collect(toList());
 
         final List<Member> members = participationList.stream()
@@ -113,5 +114,11 @@ public class SocialService {
                 .owner(SocialMembersResponse.SocialMember.of(owner))
                 .members(socialMemberResponses)
                 .build();
+    }
+
+    public boolean isParticipate(Long socialId, PrincipalDetails principalDetails) {
+        return participationService.findAllBySocialId(socialId)
+                .stream()
+                .anyMatch(p -> p.getMember().getId().equals(principalDetails.getMember().getId()));
     }
 }
