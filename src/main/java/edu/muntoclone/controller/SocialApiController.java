@@ -71,24 +71,7 @@ public class SocialApiController {
 
     @GetMapping("/socials/{id}/members")
     public SocialMembersResponse findAllSocialMembers(@PathVariable Long id) {
-        // TODO: 2022-06-19 서비스 로직으로 분리해야 함.
-        final Member owner = socialService.findById(id).getOwner();
-        final List<Participation> participationList = participationService.findAllBySocialId(id)
-                .stream().filter(p -> p.getApprovedStatus().equals(1))
-                .collect(toList());
-        final List<Member> members = participationList.stream()
-                .map(Participation::getMember)
-                .collect(toList());
-
-        final List<SocialMembersResponse.SocialMember> socialMemberResponses =
-                members.stream()
-                        .map(SocialMembersResponse.SocialMember::of)
-                        .collect(toList());
-
-        return SocialMembersResponse.builder()
-                .owner(SocialMembersResponse.SocialMember.of(owner))
-                .members(socialMemberResponses)
-                .build();
+        return socialService.findMembersBySocialId(id);
     }
 
     @GetMapping("/categories/{id}/socials")
@@ -105,28 +88,7 @@ public class SocialApiController {
     public void participate(@PathVariable Long id,
                             @RequestBody String answer,
                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        final Social social = socialService.findById(id);
-        final Member participationMember = principalDetails.getMember();
-        int approvedStatus = 0;
 
-        // TODO: 2022-06-19 서비스 로직으로 분리해야 함.
-        final int participationHeadcount = participationService.findAllBySocialId(social.getId())
-                .size();
-
-        // 소셜링의 참여 인원이 꽉찼으면 거부
-        if (participationHeadcount >= social.getLimitHeadcount())
-            throw new SocialHeadcountLimitException("The number of people is full.");
-
-        if (social.getRecruitmentType() == RecruitmentType.EARLY_BIRD)
-            approvedStatus = 1;
-
-        final Participation participation = Participation.builder()
-                .member(participationMember)
-                .social(social)
-                .answer(answer)
-                .approvedStatus(approvedStatus)
-                .build();
-
-        participationRepository.save(participation);
+        socialService.participate(id, answer, principalDetails);
     }
 }

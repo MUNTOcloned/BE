@@ -30,12 +30,12 @@ public class JwtCheckFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String bearer = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String bearer = request.getHeader(HttpHeaders.AUTHORIZATION); // bearer Token
         if (bearer == null || !bearer.startsWith("Bearer ")) {
             chain.doFilter(request, response);
             return;
         }
-
+        // Token
         String token = bearer.substring("Bearer ".length());
         VerifyResult verifyResult = JwtUtils.verify(token);
 
