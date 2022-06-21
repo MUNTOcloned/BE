@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,9 +35,9 @@ public class CommentService {
 
 
     // 댓글 조회
-//    public Comment findBySocialId(Long id) {
-//
-//    }
+    public List<Comment> findAllBySocialId(Long id) {
+        return commentRepository.findAllBySocialId(id);
+    }
 
 
     // 댓글 삭제
