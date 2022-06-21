@@ -3,6 +3,7 @@ package edu.muntoclone.service;
 import edu.muntoclone.aws.AwsS3BucketService;
 import edu.muntoclone.aws.AwsS3FileUploadType;
 import edu.muntoclone.dto.SocialMembersResponse;
+import edu.muntoclone.dto.SocialModifyRequest;
 import edu.muntoclone.dto.SocialRegisterRequest;
 import edu.muntoclone.entity.Category;
 import edu.muntoclone.entity.Member;
@@ -12,6 +13,7 @@ import edu.muntoclone.exception.SocialHeadcountLimitException;
 import edu.muntoclone.repository.ParticipationRepository;
 import edu.muntoclone.repository.SocialRepository;
 import edu.muntoclone.security.PrincipalDetails;
+import edu.muntoclone.type.MeetingType;
 import edu.muntoclone.type.RecruitmentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -138,5 +140,47 @@ public class SocialService {
         return participationService.findAllBySocialId(socialId)
                 .stream()
                 .anyMatch(p -> p.getMember().getId().equals(principalDetails.getMember().getId()));
+    }
+
+    @Transactional
+    public void modify(Long socialId, SocialModifyRequest socialModifyRequest) {
+        final Social social = this.findById(socialId);
+        final Long categoryId = socialModifyRequest.getCategoryId();
+        final Category category = categoryService.findById(categoryId);
+        final MultipartFile imageFile = socialModifyRequest.getImageFile();
+        final String imageUrl = imageFile.isEmpty() ?
+                null : awsS3BucketService.uploadFile(imageFile, AwsS3FileUploadType.SOCIAL);
+
+        final List<Participation> participationList =
+                participationService.findAllBySocialId(socialId);
+
+        if (participationList.isEmpty()) {
+            social.modify(
+                    category,
+                    socialModifyRequest.getTitle(),
+                    socialModifyRequest.getContent(),
+                    imageUrl,
+                    socialModifyRequest.getStartDate(),
+                    socialModifyRequest.getStartTime(),
+                    socialModifyRequest.getMeetingType().equals(MeetingType.ONLINE.getValue()) ?
+                            MeetingType.ONLINE : MeetingType.OFFLINE,
+                    socialModifyRequest.getRecruitmentType().equals(RecruitmentType.APPROVED.getValue()) ?
+                            RecruitmentType.APPROVED : RecruitmentType.EARLY_BIRD,
+                    socialModifyRequest.getLimitHeadcount(),
+                    socialModifyRequest.getEntryFee(),
+                    socialModifyRequest.getEntryFeeInfo()
+            );
+        } else {
+            social.modify(
+                    category,
+                    socialModifyRequest.getTitle(),
+                    socialModifyRequest.getContent(),
+                    imageUrl,
+                    socialModifyRequest.getStartDate(),
+                    socialModifyRequest.getStartTime(),
+                    socialModifyRequest.getLimitHeadcount()
+            );
+        }
+
     }
 }
