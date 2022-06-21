@@ -1,12 +1,9 @@
 package edu.muntoclone.controller;
 
-import edu.muntoclone.dto.SocalModifyRequest;
 import edu.muntoclone.dto.SocialDetailsResponse;
 import edu.muntoclone.dto.SocialMembersResponse;
 import edu.muntoclone.dto.SocialModifyRequest;
 import edu.muntoclone.dto.SocialRegisterRequest;
-import edu.muntoclone.entity.Member;
-import edu.muntoclone.entity.Participation;
 import edu.muntoclone.entity.Social;
 import edu.muntoclone.repository.ParticipationRepository;
 import edu.muntoclone.security.PrincipalDetails;
@@ -22,9 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController

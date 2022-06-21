@@ -2,6 +2,7 @@ package edu.muntoclone.service;
 
 import edu.muntoclone.entity.Participation;
 import edu.muntoclone.repository.ParticipationRepository;
+import edu.muntoclone.repository.SocialRepository;
 import edu.muntoclone.security.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,8 @@ import java.util.List;
 public class ParticipationService {
 
     private final ParticipationRepository participationRepository;
-    private final SocialService socialService;
+    //private final SocialService socialService; // 양방향 의존관계 오류 발생..
+    private final SocialRepository socialRepository;
 
     public List<Participation> findAllBySocialId(Long id) {
         return participationRepository.findAllBySocialId(id);
@@ -24,7 +26,10 @@ public class ParticipationService {
     @Transactional
     public void approve(Long sid, Long mid, PrincipalDetails principalDetails) {
         final Long memberId = principalDetails.getMember().getId();
-        final Long ownerId = socialService.findById(sid).getOwner().getId();
+        final Long ownerId = socialRepository.findById(sid)
+                .orElseThrow(() -> new IllegalArgumentException("Social does not exist."))
+                .getOwner()
+                .getId();
         if (!memberId.equals(ownerId))
             throw new IllegalArgumentException("You are not the owner of social.");
 
