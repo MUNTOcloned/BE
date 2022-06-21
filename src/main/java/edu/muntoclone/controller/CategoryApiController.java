@@ -5,6 +5,7 @@ import edu.muntoclone.service.CategoryService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,6 +23,7 @@ public class CategoryApiController {
 
     private final CategoryService categoryService;
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/categories")
     public String addCategory(@RequestBody @Valid CategoryAddRequest categoryAddRequest) {
@@ -33,6 +35,7 @@ public class CategoryApiController {
         return String.valueOf(category.getId());
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @GetMapping("/categories")
     public List<CategoryDetailResponse> findCategoryAll() {
         return categoryService.findAll()

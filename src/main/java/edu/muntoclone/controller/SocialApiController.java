@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,7 @@ public class SocialApiController {
      * @param socialRegisterRequest 소셜 등록 DTO
      * @param principalDetails      로그인 사용자 정보
      */
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/categories/{id}/socials", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void registerSocial(
@@ -51,8 +53,9 @@ public class SocialApiController {
      *
      * @param id 소셜 번호
      */
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @PatchMapping(value = "/socials/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateSocial(
+    public void modifySocial(
             @PathVariable Long id,
             @RequestBody SocialModifyRequest socialModifyRequest) {
         socialService.modify(id, socialModifyRequest);
@@ -64,6 +67,7 @@ public class SocialApiController {
      * @param id               소셜 번호
      * @param principalDetails 로그인 사용자 정보
      */
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @DeleteMapping("/socials/{id}")
     public void deleteSocial(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         final Long socialOwnerId = socialService.findById(id).getOwner().getId();
@@ -82,8 +86,9 @@ public class SocialApiController {
      * @param principalDetails 로그인 사용자 정보
      * @return 소셜 상세 DTO
      */
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @GetMapping("/socials/{id}")
-    public SocialDetailsResponse socialDetail(
+    public SocialDetailsResponse showSocialDetail(
             @PathVariable Long id,
             @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
@@ -100,8 +105,9 @@ public class SocialApiController {
      * @param approved 소셜 참여 여부 ( 1 = 참여, 0 미참여 )
      * @return 회원 목록 DTO
      */
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @GetMapping("/socials/{id}/members")
-    public SocialMembersResponse findAllSocialMembers(
+    public SocialMembersResponse showSocialMembers(
             @PathVariable Long id,
             @RequestParam Integer approved) {
         return socialService.findMembersBySocialId(id, approved);
@@ -113,8 +119,9 @@ public class SocialApiController {
      * @param id 카테고리 번호
      * @return 전체 소셜링 목록 DTO
      */
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @GetMapping("/categories/{id}/socials")
-    public Page<SocialDetailsResponse> findAllSocials(
+    public Page<SocialDetailsResponse> showSocials(
             @PathVariable Long id,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
@@ -129,6 +136,7 @@ public class SocialApiController {
      * @param answer           참여 질문의 대답
      * @param principalDetails 로그인 사용자 정보
      */
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/socials/{id}/participation")
     public void participate(@PathVariable Long id,
@@ -138,6 +146,14 @@ public class SocialApiController {
         socialService.participate(id, answer, principalDetails);
     }
 
+    /**
+     * 소셜링 회원 승인 API
+     *
+     * @param sid 소셜 번호
+     * @param mid 회원 번호
+     * @param principalDetails 로그인 사용자 정보
+     */
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @PostMapping("/socials/{sid}/members/{mid}/approved")
     public void approve(@PathVariable Long sid, @PathVariable Long mid,
                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
