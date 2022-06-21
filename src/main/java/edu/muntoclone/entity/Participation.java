@@ -1,9 +1,6 @@
 package edu.muntoclone.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -20,6 +17,7 @@ public class Participation extends Timestamped {
     @Lob
     private String answer;
 
+    @Setter
     @Column(nullable = false)
     private Integer approvedStatus;
 
