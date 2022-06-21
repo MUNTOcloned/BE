@@ -3,15 +3,11 @@ package edu.muntoclone.controller;
 import edu.muntoclone.dto.SocialDetailsResponse;
 import edu.muntoclone.dto.SocialMembersResponse;
 import edu.muntoclone.dto.SocialRegisterRequest;
-import edu.muntoclone.entity.Member;
-import edu.muntoclone.entity.Participation;
 import edu.muntoclone.entity.Social;
-import edu.muntoclone.exception.SocialHeadcountLimitException;
 import edu.muntoclone.repository.ParticipationRepository;
 import edu.muntoclone.security.PrincipalDetails;
 import edu.muntoclone.service.ParticipationService;
 import edu.muntoclone.service.SocialService;
-import edu.muntoclone.type.RecruitmentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,12 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RestController
@@ -77,8 +67,8 @@ public class SocialApiController {
     @GetMapping("/socials/{id}/members")
     public SocialMembersResponse findAllSocialMembers(
             @PathVariable Long id,
-            @RequestBody Integer approvedStatus) {
-        return socialService.findMembersBySocialId(id, approvedStatus);
+            @RequestParam Integer approved) {
+        return socialService.findMembersBySocialId(id, approved);
     }
 
     @GetMapping("/categories/{id}/socials")
