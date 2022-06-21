@@ -1,7 +1,9 @@
 package edu.muntoclone.controller;
 
+import edu.muntoclone.dto.SocalModifyRequest;
 import edu.muntoclone.dto.SocialDetailsResponse;
 import edu.muntoclone.dto.SocialMembersResponse;
+import edu.muntoclone.dto.SocialModifyRequest;
 import edu.muntoclone.dto.SocialRegisterRequest;
 import edu.muntoclone.entity.Member;
 import edu.muntoclone.entity.Participation;
@@ -21,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -55,8 +58,10 @@ public class SocialApiController {
      * @param id 소셜 번호
      */
     @PatchMapping(value = "/socials/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateSocial(@PathVariable Long id) {
-        // TODO document why this method is empty
+    public void updateSocial(
+            @PathVariable Long id,
+            @RequestBody SocialModifyRequest socialModifyRequest) {
+        socialService.modify(id, socialModifyRequest);
     }
 
     /**

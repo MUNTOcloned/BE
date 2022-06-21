@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -54,6 +55,35 @@ public class Social extends Timestamped {
     private String entryFeeInfo;
 
     private String question;
+
+    public void modify(Category category, String title, String content,
+                       String imageUrl, LocalDate startDate, LocalTime startTime,
+                       MeetingType meetingType, RecruitmentType recruitmentType,
+                       Integer limitHeadcount, Integer entryFee, String entryFeeInfo) {
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.meetingType = meetingType;
+        this.recruitmentType = recruitmentType;
+        this.limitHeadcount = limitHeadcount;
+        this.entryFee = entryFee;
+        this.entryFeeInfo = entryFeeInfo;
+    }
+
+    public void modify(Category category, String title, String content,
+                       String imageUrl, LocalDate startDate, LocalTime startTime,
+                       Integer limitHeadcount) {
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.limitHeadcount = limitHeadcount;
+    }
 
     @Builder
     public Social(Member owner, Category category, String title,
