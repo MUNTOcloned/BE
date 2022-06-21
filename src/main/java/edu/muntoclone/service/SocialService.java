@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -73,11 +72,23 @@ public class SocialService {
         final Member participationMember = principalDetails.getMember();
         int approvedStatus = 0;
 
-        final int participationHeadcount = participationService
-                .findAllBySocialId(social.getId())
-                .size();
+        // 소셜링의 Owner라면 참여하지 못한다.
+        final Long ownerId = this.findById(socialId).getOwner().getId();
+        final Long memberId = participationMember.getId();
+        if (ownerId.equals(memberId))
+            throw new IllegalArgumentException("The owner can't participate.");
 
-        // 소셜링의 참여 인원이 꽉찼으면 거부
+        // 이미 참여 신청을 했다면 참여하지 못해야 한다.
+        final boolean alreadyParticipation = participationService.findAllBySocialId(socialId)
+                .stream()
+                .anyMatch(p -> p.getMember().getId().equals(participationMember.getId()));
+        if (alreadyParticipation)
+            throw new IllegalArgumentException("You have already applied for participation.");
+
+        // 소셜링의 참여 인원이 전부 찼으면 거부
+        final int participationHeadcount = participationService
+                .findAllBySocialId(social.getId()).size();
+
         if (participationHeadcount >= social.getLimitHeadcount())
             throw new SocialHeadcountLimitException("The number of people is full.");
 
@@ -98,7 +109,9 @@ public class SocialService {
         final Member owner = this.findById(socialId).getOwner();
         final List<Participation> participationList = participationService
                 .findAllBySocialId(socialId)
-                .stream().filter(p -> p.getApprovedStatus().equals(approvedStatus))
+                .stream()
+                .filter(p -> p.getApprovedStatus().equals(approvedStatus))
+                .filter(p -> !p.getMember().getId().equals(owner.getId()))
                 .collect(toList());
 
         final List<Member> members = participationList.stream()
@@ -117,6 +130,11 @@ public class SocialService {
     }
 
     public boolean isParticipate(Long socialId, PrincipalDetails principalDetails) {
+        final Long ownerId = this.findById(socialId).getOwner().getId();
+        final Long memberId = principalDetails.getMember().getId();
+        if (ownerId.equals(memberId))
+            return true;
+
         return participationService.findAllBySocialId(socialId)
                 .stream()
                 .anyMatch(p -> p.getMember().getId().equals(principalDetails.getMember().getId()));
