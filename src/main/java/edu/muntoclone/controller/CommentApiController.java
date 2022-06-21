@@ -39,8 +39,8 @@ class CommentApiController {
         // 받아온 정보 리스트에 추가
         List<CommentResponse> commentResponses = commentService.findAllBySocialId(id)
                 .stream()
-                .map(c -> new CommentResponse(c.getContent(), c.getWriter(), c.getLikeCount())
-                .collect(Collectors.toList());
+                .map(c -> new CommentResponse(c.getContent(), c.getWriter(), c.getCreatedAt(), c.getLikeCount()))
+                        .collect(Collectors.toList());
 
         return commentResponses;
     }

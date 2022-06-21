@@ -1,5 +1,6 @@
 package edu.muntoclone.dto;
 
+import edu.muntoclone.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,12 +13,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CommentResponse {
     private String content;
-    private String writer;
+    private Member writer;
     private LocalDateTime createdAt;
     private int likeCount;
 
-    @Builder
-    public CommentResponse(String content, String writer, LocalDateTime createdAt, int likeCount) {
+    public CommentResponse(String content, Member writer, LocalDateTime createdAt, int likeCount) {
         this.content = content;
         this.writer = writer;
         this.createdAt = createdAt;
