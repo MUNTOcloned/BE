@@ -3,6 +3,8 @@ package edu.muntoclone.controller;
 import edu.muntoclone.dto.SocialDetailsResponse;
 import edu.muntoclone.dto.SocialMembersResponse;
 import edu.muntoclone.dto.SocialRegisterRequest;
+import edu.muntoclone.entity.Member;
+import edu.muntoclone.entity.Participation;
 import edu.muntoclone.entity.Social;
 import edu.muntoclone.repository.ParticipationRepository;
 import edu.muntoclone.security.PrincipalDetails;
@@ -19,6 +21,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -29,6 +33,13 @@ public class SocialApiController {
     private final ParticipationService participationService;
     private final ParticipationRepository participationRepository;
 
+    /**
+     * 소셜 등록 API
+     *
+     * @param id                    카테고리 번호
+     * @param socialRegisterRequest 소셜 등록 DTO
+     * @param principalDetails      로그인 사용자 정보
+     */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/categories/{id}/socials", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void registerSocial(
@@ -38,11 +49,22 @@ public class SocialApiController {
         socialService.registerSocial(id, socialRegisterRequest, principalDetails);
     }
 
+    /**
+     * 소셜 수정 API
+     *
+     * @param id 소셜 번호
+     */
     @PatchMapping(value = "/socials/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void updateSocial(@PathVariable Long id) {
         // TODO document why this method is empty
     }
 
+    /**
+     * 소셜 삭제 API
+     *
+     * @param id               소셜 번호
+     * @param principalDetails 로그인 사용자 정보
+     */
     @DeleteMapping("/socials/{id}")
     public void deleteSocial(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         final Long socialOwnerId = socialService.findById(id).getOwner().getId();
@@ -54,6 +76,13 @@ public class SocialApiController {
         socialService.deleteById(id);
     }
 
+    /**
+     * 소셜 상세 조회 API
+     *
+     * @param id               소셜 번호
+     * @param principalDetails 로그인 사용자 정보
+     * @return 소셜 상세 DTO
+     */
     @GetMapping("/socials/{id}")
     public SocialDetailsResponse socialDetail(
             @PathVariable Long id,
@@ -64,6 +93,14 @@ public class SocialApiController {
         return SocialDetailsResponse.of(social, isParticipate);
     }
 
+    /**
+     * 소셜에 참여신청한 회원 목록 조회 API
+     * approved가 1인 경우 참여 확정 멤버를 응답하고 0인 경우엔 참여 대기 멤버를 응답한다.
+     *
+     * @param id       소셜 번호
+     * @param approved 소셜 참여 여부 ( 1 = 참여, 0 미참여 )
+     * @return 회원 목록 DTO
+     */
     @GetMapping("/socials/{id}/members")
     public SocialMembersResponse findAllSocialMembers(
             @PathVariable Long id,
@@ -71,6 +108,12 @@ public class SocialApiController {
         return socialService.findMembersBySocialId(id, approved);
     }
 
+    /**
+     * 전체 소셜링 조회 API
+     *
+     * @param id 카테고리 번호
+     * @return 전체 소셜링 목록 DTO
+     */
     @GetMapping("/categories/{id}/socials")
     public Page<SocialDetailsResponse> findAllSocials(
             @PathVariable Long id,
@@ -80,6 +123,13 @@ public class SocialApiController {
                 .map(s -> SocialDetailsResponse.of(s, false));
     }
 
+    /**
+     * 소셜링 참여 API
+     *
+     * @param id               소셜 번호
+     * @param answer           참여 질문의 대답
+     * @param principalDetails 로그인 사용자 정보
+     */
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/socials/{id}/participation")
     public void participate(@PathVariable Long id,
@@ -88,4 +138,11 @@ public class SocialApiController {
 
         socialService.participate(id, answer, principalDetails);
     }
+
+    @PostMapping("/socials/{sid}/members/{mid}/approved")
+    public void approve(@PathVariable Long sid, @PathVariable Long mid,
+                        @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        participationService.approve(sid, mid, principalDetails);
+    }
+
 }
