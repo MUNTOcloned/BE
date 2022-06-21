@@ -32,6 +32,8 @@ public class SocialRegisterRequest {
     private String meetingType;
     private String address;
     private String recruitmentType;
+
+    private String question;
     private Integer limitHeadcount;
     private Integer entryFee;
     private String entryFeeInfo;
@@ -39,7 +41,7 @@ public class SocialRegisterRequest {
     @Builder
     public SocialRegisterRequest(Long categoryId, String title, String content,
                                  MultipartFile imageFile, LocalDate startDate, LocalTime startTime,
-                                 String meetingType, String address, String recruitmentType,
+                                 String meetingType, String address, String recruitmentType, String question,
                                  Integer limitHeadcount, Integer entryFee, String entryFeeInfo
     ) {
         this.categoryId = categoryId;
@@ -51,6 +53,7 @@ public class SocialRegisterRequest {
         this.meetingType = meetingType;
         this.address = address;
         this.recruitmentType = recruitmentType;
+        this.question = question;
         this.limitHeadcount = limitHeadcount;
         this.entryFee = entryFee;
         this.entryFeeInfo = entryFeeInfo;
@@ -77,6 +80,7 @@ public class SocialRegisterRequest {
                 .meetingType(mType)
                 .address(this.address)
                 .recruitmentType(rType)
+                .question(question)
                 .limitHeadcount(this.limitHeadcount)
                 .entryFee(this.entryFee)
                 .entryFeeInfo(this.entryFeeInfo)

@@ -13,6 +13,7 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SocialDetailsResponse {
 
+    private Long id;
     private String socialImageUrl;
     private String title;
     private String content;
@@ -26,12 +27,15 @@ public class SocialDetailsResponse {
     private String entryFeeInfo;
     private Integer socialLikeCount;
 
+    private boolean isParticipate;
+
     @Builder
-    public SocialDetailsResponse(String socialImageUrl, String title, String content,
+    public SocialDetailsResponse(Long id, String socialImageUrl, String title, String content,
                                  String meetingType, String recruitmentType, String address,
                                  LocalDate startDate, LocalTime startTime, Integer limitHeadcount,
-                                 Integer entryFee, String entryFeeInfo, Integer socialLikeCount) {
+                                 Integer entryFee, String entryFeeInfo, Integer socialLikeCount, boolean isParticipate) {
 
+        this.id = id;
         this.socialImageUrl = socialImageUrl;
         this.title = title;
         this.content = content;
@@ -44,10 +48,12 @@ public class SocialDetailsResponse {
         this.entryFee = entryFee;
         this.entryFeeInfo = entryFeeInfo;
         this.socialLikeCount = socialLikeCount;
+        this.isParticipate = isParticipate;
     }
 
-    public static SocialDetailsResponse of(Social social) {
+    public static SocialDetailsResponse of(Social social, boolean isParticipate) {
         return SocialDetailsResponse.builder()
+                .id(social.getId())
                 .socialImageUrl(social.getImageUrl())
                 .title(social.getTitle())
                 .content(social.getContent())
@@ -60,6 +66,7 @@ public class SocialDetailsResponse {
                 .entryFee(social.getEntryFee())
                 .entryFeeInfo(social.getEntryFeeInfo())
                 .socialLikeCount(0)
+                .isParticipate(isParticipate)
                 .build();
     }
 }

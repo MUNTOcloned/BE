@@ -14,7 +14,7 @@ import java.time.LocalTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Social {
+public class Social extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,6 +54,35 @@ public class Social {
     private String entryFeeInfo;
 
     private String question;
+
+    public void modify(Category category, String title, String content,
+                       String imageUrl, LocalDate startDate, LocalTime startTime,
+                       MeetingType meetingType, RecruitmentType recruitmentType,
+                       Integer limitHeadcount, Integer entryFee, String entryFeeInfo) {
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.meetingType = meetingType;
+        this.recruitmentType = recruitmentType;
+        this.limitHeadcount = limitHeadcount;
+        this.entryFee = entryFee;
+        this.entryFeeInfo = entryFeeInfo;
+    }
+
+    public void modify(Category category, String title, String content,
+                       String imageUrl, LocalDate startDate, LocalTime startTime,
+                       Integer limitHeadcount) {
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.limitHeadcount = limitHeadcount;
+    }
 
     @Builder
     public Social(Member owner, Category category, String title,
