@@ -1,17 +1,17 @@
 package edu.muntoclone.dto;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentRegisterRequset {
     private String content;
+    private int likeCount;
 
     @Builder
     public CommentRegisterRequset(String content) {
         this.content = content;
+        this.likeCount = likeCount;
     }
 }

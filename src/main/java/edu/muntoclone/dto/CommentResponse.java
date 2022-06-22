@@ -1,5 +1,6 @@
 package edu.muntoclone.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.muntoclone.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CommentResponse {
     private String content;
+
     private Member writer;
     private LocalDateTime createdAt;
     private int likeCount;
