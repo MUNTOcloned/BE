@@ -24,8 +24,10 @@ class CommentApiController {
     // 댓글 등록
     @PostMapping("/socials/{id}/comments")
     public void commentRegister(@PathVariable Long id,
-                                CommentRegisterRequset commentRegisterRequest,
+                                @RequestBody CommentRegisterRequset commentRegisterRequest,
                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+        System.out.println(commentRegisterRequest);
         commentService.registerComment(id, commentRegisterRequest, principalDetails);
     }
 
