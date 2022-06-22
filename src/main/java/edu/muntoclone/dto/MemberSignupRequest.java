@@ -15,14 +15,14 @@ public class MemberSignupRequest {
     private String name;
     private String email;
     private String password;
-    private MultipartFile profileImage;
+    private MultipartFile profileImageFile;
 
     @Builder
-    public MemberSignupRequest(String name, String email, String password, MultipartFile profileImage) {
+    public MemberSignupRequest(String name, String email, String password, MultipartFile profileImageFile) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.profileImage = profileImage;
+        this.profileImageFile = profileImageFile;
     }
 
     public Member toEntity(BCryptPasswordEncoder passwordEncoder) {

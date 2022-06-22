@@ -143,9 +143,8 @@ public class SocialService {
     }
 
     @Transactional
-    public void modify(Long socialId, SocialModifyRequest socialModifyRequest) {
+    public void modify(Long categoryId, Long socialId, SocialModifyRequest socialModifyRequest) {
         final Social social = this.findById(socialId);
-        final Long categoryId = socialModifyRequest.getCategoryId();
         final Category category = categoryService.findById(categoryId);
         final MultipartFile imageFile = socialModifyRequest.getImageFile();
         final String imageUrl = imageFile.isEmpty() ?

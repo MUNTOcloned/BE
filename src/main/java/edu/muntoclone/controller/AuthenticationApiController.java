@@ -37,7 +37,7 @@ public class AuthenticationApiController {
         memberService.confirmMemberEmailDuplicate(memberSignupRequest.getEmail());
         memberService.signup(
                 memberSignupRequest.toEntity(passwordEncoder),
-                memberSignupRequest.getProfileImage()
+                memberSignupRequest.getProfileImageFile()
         );
     }
 

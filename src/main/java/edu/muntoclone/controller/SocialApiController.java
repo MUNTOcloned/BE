@@ -50,15 +50,14 @@ public class SocialApiController {
 
     /**
      * 소셜 수정 API
-     *
-     * @param id 소셜 번호
      */
     @PreAuthorize("hasAnyAuthority('ROLE_USER')")
-    @PatchMapping(value = "/socials/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/categories/{cid}/socials/{sid}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void modifySocial(
-            @PathVariable Long id,
-            @RequestBody SocialModifyRequest socialModifyRequest) {
-        socialService.modify(id, socialModifyRequest);
+            @PathVariable Long cid,
+            @PathVariable Long sid,
+            SocialModifyRequest socialModifyRequest) {
+        socialService.modify(cid, sid, socialModifyRequest);
     }
 
     /**

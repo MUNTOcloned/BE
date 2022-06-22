@@ -74,16 +74,17 @@ public class GlobalExceptionHandler {
             HttpMediaTypeNotSupportedException e, HttpServletRequest request) {
 
         log.error("handleHttpMediaTypeNotSupportedException", e);
+        log.info("ContentType = {}", e.getContentType());
         String path = request.getRequestURI();
         return ErrorResponse.of(path, ErrorCode.MEDIA_TYPE_NOT_SUPPORTED);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
-    public ErrorResponse handleException(Exception e, HttpServletRequest request) {
+    public String handleException(Exception e, HttpServletRequest request) {
         log.error("handleException", e);
-        String path = request.getRequestURI();
-        return ErrorResponse.of(path, ErrorCode.INTERNAL_SERVER_ERROR);
+        return request.getRequestURI() + " -> " + e.getMessage();
+        //return ErrorResponse.of(path, ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
 }
