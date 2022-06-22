@@ -159,4 +159,12 @@ public class SocialApiController {
         participationService.approve(sid, mid, principalDetails);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+    @DeleteMapping("/socials/{sid}/members/{mid}/refuse")
+    public void refuse(@PathVariable Long sid, @PathVariable Long mid,
+                       @AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+        participationService.refuse(sid, mid, principalDetails);
+    }
+
 }

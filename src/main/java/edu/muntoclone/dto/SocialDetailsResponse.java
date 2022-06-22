@@ -25,13 +25,15 @@ public class SocialDetailsResponse {
     private Integer limitHeadcount;
     private Integer entryFee;
     private String entryFeeInfo;
+
+    private String question;
     private Integer socialLikeCount;
 
     private boolean isParticipate;
 
     @Builder
     public SocialDetailsResponse(Long id, String socialImageUrl, String title, String content,
-                                 String meetingType, String recruitmentType, String address,
+                                 String meetingType, String recruitmentType, String address, String question,
                                  LocalDate startDate, LocalTime startTime, Integer limitHeadcount,
                                  Integer entryFee, String entryFeeInfo, Integer socialLikeCount, boolean isParticipate) {
 
@@ -45,6 +47,7 @@ public class SocialDetailsResponse {
         this.startDate = startDate;
         this.startTime = startTime;
         this.limitHeadcount = limitHeadcount;
+        this.question = question;
         this.entryFee = entryFee;
         this.entryFeeInfo = entryFeeInfo;
         this.socialLikeCount = socialLikeCount;
@@ -54,6 +57,7 @@ public class SocialDetailsResponse {
     public static SocialDetailsResponse of(Social social, boolean isParticipate) {
         return SocialDetailsResponse.builder()
                 .id(social.getId())
+                .question(social.getQuestion())
                 .socialImageUrl(social.getImageUrl())
                 .title(social.getTitle())
                 .content(social.getContent())

@@ -25,13 +25,7 @@ public class ParticipationService {
 
     @Transactional
     public void approve(Long sid, Long mid, PrincipalDetails principalDetails) {
-        final Long memberId = principalDetails.getMember().getId();
-        final Long ownerId = socialRepository.findById(sid)
-                .orElseThrow(() -> new IllegalArgumentException("Social does not exist."))
-                .getOwner()
-                .getId();
-        if (!memberId.equals(ownerId))
-            throw new IllegalArgumentException("You are not the owner of social.");
+        checkSocialOwner(sid, principalDetails);
 
         final Participation participation = this
                 .findAllBySocialId(sid)
@@ -42,5 +36,28 @@ public class ParticipationService {
 
 
         participation.setApprovedStatus(1);
+    }
+
+    @Transactional
+    public void refuse(Long sid, Long mid, PrincipalDetails principalDetails) {
+        checkSocialOwner(sid, principalDetails);
+        final Participation participation = participationRepository
+                .findAllBySocialId(sid)
+                .stream().filter(p -> p.getMember().getId().equals(mid))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("participation is not found"));
+
+        participationRepository.delete(participation);
+    }
+
+    private void checkSocialOwner(Long sid, PrincipalDetails principalDetails) {
+        final Long memberId = principalDetails.getMember().getId();
+        final Long ownerId = socialRepository.findById(sid)
+                .orElseThrow(() -> new IllegalArgumentException("Social does not exist."))
+                .getOwner()
+                .getId();
+
+        if (!memberId.equals(ownerId))
+            throw new IllegalArgumentException("You are not the owner of social.");
     }
 }

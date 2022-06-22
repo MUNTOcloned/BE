@@ -69,4 +69,9 @@ public class AuthenticationApiController {
                 .expiresAt(JwtUtils.AUTH_TIME_SECOND)
                 .build();
     }
+
+    @GetMapping("/authentication")
+    public Authentication authentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
 }
