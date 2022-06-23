@@ -14,6 +14,7 @@ import java.time.LocalTime;
 public class SocialDetailsResponse {
 
     private Long id;
+    private Long categoryId;
     private String socialImageUrl;
     private String title;
     private String content;
@@ -25,18 +26,18 @@ public class SocialDetailsResponse {
     private Integer limitHeadcount;
     private Integer entryFee;
     private String entryFeeInfo;
-
     private String question;
     private Integer socialLikeCount;
 
     private boolean isParticipate;
 
     @Builder
-    public SocialDetailsResponse(Long id, String socialImageUrl, String title, String content,
+    public SocialDetailsResponse(Long id, Long categoryId, String socialImageUrl, String title, String content,
                                  String meetingType, String recruitmentType, String address, String question,
                                  LocalDate startDate, LocalTime startTime, Integer limitHeadcount,
                                  Integer entryFee, String entryFeeInfo, Integer socialLikeCount, boolean isParticipate) {
 
+        this.categoryId = categoryId;
         this.id = id;
         this.socialImageUrl = socialImageUrl;
         this.title = title;
@@ -57,6 +58,7 @@ public class SocialDetailsResponse {
     public static SocialDetailsResponse of(Social social, boolean isParticipate) {
         return SocialDetailsResponse.builder()
                 .id(social.getId())
+                .categoryId(social.getCategory().getId())
                 .question(social.getQuestion())
                 .socialImageUrl(social.getImageUrl())
                 .title(social.getTitle())

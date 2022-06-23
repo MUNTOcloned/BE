@@ -9,6 +9,9 @@ import edu.muntoclone.repository.ParticipationRepository;
 import edu.muntoclone.security.PrincipalDetails;
 import edu.muntoclone.service.ParticipationService;
 import edu.muntoclone.service.SocialService;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -132,17 +135,23 @@ public class SocialApiController {
      * 소셜링 참여 API
      *
      * @param id               소셜 번호
-     * @param answer           참여 질문의 대답
      * @param principalDetails 로그인 사용자 정보
      */
     @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/socials/{id}/participation")
     public void participate(@PathVariable Long id,
-                            @RequestBody String answer,
+                            @RequestBody ParticipationRequest participationRequest,
                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        socialService.participate(id, answer, principalDetails);
+        socialService.participate(id, participationRequest.getAnswer(), principalDetails);
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    private static class ParticipationRequest {
+        private String answer;
     }
 
     /**
