@@ -146,6 +146,18 @@ public class SocialApiController {
     }
 
     /**
+     * 소셜링 참여 취소 API
+     */
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+    @ResponseStatus(HttpStatus.CREATED)
+    @DeleteMapping("/socials/{id}/participation")
+    public void participate(@PathVariable Long id,
+                            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+        socialService.cancelParticipation(id, principalDetails);
+    }
+
+    /**
      * 소셜링 회원 승인 API
      *
      * @param sid 소셜 번호

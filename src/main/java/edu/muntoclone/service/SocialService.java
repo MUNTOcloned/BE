@@ -31,7 +31,6 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class SocialService {
 
-    // TODO: 2022-06-18 의문점: 서비스에서 다른 서비스를 호출해도 되는지?
     private final SocialRepository socialRepository;
     private final ParticipationRepository participationRepository;
     private final CategoryService categoryService;
@@ -116,17 +115,22 @@ public class SocialService {
                 .filter(p -> !p.getMember().getId().equals(owner.getId()))
                 .collect(toList());
 
-        final List<Member> members = participationList.stream()
-                .map(Participation::getMember)
-                .collect(toList());
+//        final List<Member> members = participationList.stream()
+//                .map(Participation::getMember)
+//                .collect(toList());
+
+//        final List<SocialMembersResponse.SocialMember> socialMemberResponses =
+//                members.stream()
+//                        .map(SocialMembersResponse.SocialMember::of)
+//                        .collect(toList());
 
         final List<SocialMembersResponse.SocialMember> socialMemberResponses =
-                members.stream()
-                        .map(SocialMembersResponse.SocialMember::of)
+                participationList.stream()
+                        .map(p -> SocialMembersResponse.SocialMember.of(p.getMember(), p.getAnswer()))
                         .collect(toList());
 
         return SocialMembersResponse.builder()
-                .owner(SocialMembersResponse.SocialMember.of(owner))
+                .owner(SocialMembersResponse.SocialMember.of(owner, null))
                 .members(socialMemberResponses)
                 .build();
     }
@@ -181,5 +185,18 @@ public class SocialService {
             );
         }
 
+    }
+
+    @Transactional
+    public void cancelParticipation(Long socialId, PrincipalDetails principalDetails) {
+        final Long memberId = principalDetails.getMember().getId();
+
+        final Participation participation =
+                participationService.findAllBySocialId(socialId)
+                .stream().filter(p -> p.getMember().getId().equals(memberId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("You are not participating."));
+
+        participationRepository.delete(participation);
     }
 }

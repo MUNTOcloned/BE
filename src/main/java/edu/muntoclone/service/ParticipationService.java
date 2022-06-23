@@ -60,4 +60,5 @@ public class ParticipationService {
         if (!memberId.equals(ownerId))
             throw new IllegalArgumentException("You are not the owner of social.");
     }
+
 }

@@ -29,21 +29,26 @@ public class SocialMembersResponse {
         private String name;
         private String greeting;
 
+        private String answer;
+
+
 
 
         @Builder
-        public SocialMember(Long memberId, String memberProfileUrl, String name, String greeting) {
+        public SocialMember(Long memberId, String memberProfileUrl, String name, String greeting, String answer) {
             this.memberId = memberId;
             this.memberProfileUrl = memberProfileUrl;
             this.name = name;
+            this.answer = answer;
             this.greeting = greeting;
         }
 
-        public static SocialMember of(Member owner) {
+        public static SocialMember of(Member owner, String answer) {
             return SocialMember.builder()
                     .memberId(owner.getId())
                     .memberProfileUrl(owner.getProfileImageUrl())
                     .name(owner.getName())
+                    .answer(answer)
                     .build();
         }
     }
